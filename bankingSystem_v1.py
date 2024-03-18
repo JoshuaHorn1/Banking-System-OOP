@@ -37,20 +37,28 @@ def findUser():
     first_name_list = []
     user_first_name = input("Enter user's first name: ").title()
     print()
+    name_values_found = 0
     for user in userList:
         if user_first_name == user.first_name:
             first_name_list.append(user)
+            name_values_found += 1
+    if name_values_found == 0:
+        print("There are no users with that name.")
+        return
     print(f"Here are the users with the first name {user_first_name}:")
     for user in first_name_list:
         print(user.first_name, user.last_name)
     print()
     user_last_name = input("Enter user's last name: ").title()
     print()
+    found = False
     for user in first_name_list:
         if user_last_name == user.last_name:
             User.displayInfo(user)
-    else:
+            found = True
+    if not found:
         print("There is no user with that name.")
+        return
 
 
 def overdrafts():
@@ -99,4 +107,3 @@ while userChoice != "Q":
         bankDetails()
     elif userChoice == "5":
         transfer()
-    print()
