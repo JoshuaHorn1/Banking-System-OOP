@@ -22,7 +22,7 @@ class User:
         print("***** USER DETAILS: *****")
         print(f"First Name: {self.first_name}\nLast Name: {self.last_name}\nGender: {self.gender}\n"
               f"Street Address: {self.street_address}\nCity: {self.city}\nEmail: {self.email}\nCC Number:"
-              f"{self.cc_number}\nCC Type: {self.cc_type}\nBalance: {self.balance:.2f}\nAccount NO: {self.account_no}")
+              f"{self.cc_number}\nCC Type: {self.cc_type}\nBalance: ${self.balance:.2f}\nAccount NO: {self.account_no}")
         print("-------------------------")
         print()
 
@@ -80,7 +80,7 @@ def overdrafts():
     for user in userList:
         if user.balance < 0:
             total_users += 1
-            print(f"{user.first_name} {user.last_name}: {user.balance:.2f}")
+            print(f"{user.first_name} {user.last_name}: ${user.balance:.2f}")
     print(f"Total users with overdraft: {total_users}")
     print("----------------------------")
     print()
@@ -116,17 +116,31 @@ def bankDetails():
             highest_user = f"{user.first_name} {user.last_name}"
             highest_balance = user.balance
     print(f"Total users in the system: {total_users}")
-    print(f"Total bank balance: {total_balance:.2f}")
-    print(f"User with lowest balance: {lowest_user} ({lowest_balance:.2f})")
-    print(f"User with highest balance: {highest_user} ({highest_balance:.2f})")
+    print(f"Total bank balance: ${total_balance:.2f}")
+    print(f"User with lowest balance: {lowest_user} (${lowest_balance:.2f})")
+    print(f"User with highest balance: {highest_user} (${highest_balance:.2f})")
     print(f"---------------------------")
     print()
+
+
+def int_check(text):
+    valid = False
+    while not valid:
+        try:
+            number_to_check = int(input(text))
+            if isinstance(number_to_check,int):
+                valid = True
+                return number_to_check
+        except ValueError:
+            print("Value must be an integer.")
+            print()
 
 
 def transfer():
     print("--- BANK TRANSFER ---")
     send = input("Enter bank account number to withdraw from (or 'Q' to quit): ").upper()
     if send == "Q":
+        print("---------------------")
         print()
         return
     found_account = False
@@ -134,7 +148,7 @@ def transfer():
         if send == user.account_no:
             send_account_balance = user.balance
             print(f"Name: {user.first_name} {user.last_name}")
-            print(f"Balance: {user.balance}")
+            print(f"Balance: ${user.balance}")
             print()
             found_account = True
     if not found_account:
@@ -143,53 +157,21 @@ def transfer():
         return
     valid = False
     while not valid:
-        amount = int(input("Enter amount (or any letter to quit): "))
-        try:
-            if type(amount) is int:
-                if amount > send_account_balance:
-                    print("Transfer quantity can not exceed account balance.")
-                    print()
-                else:
-                    valid = True
-        except ValueError:
-            print("Value must be an integer.")
-
-        # if amount == "Q":
-        #     print()
-        #     return
-        # if type(amount) is not int:
-        #     print("Quantity must be an integer.")
-        # elif type(amount) is int:
-        #     if amount > send_account_balance:
-        #         print("Transfer quantity can not exceed account balance.")
-        #         print()
-        #     else:
-        #         valid = True
-        # else:
-        #     print("Error - please try again.")
-
-        # try:
-        #     amount = input("Enter amount (or 'Q' to quit): ").upper()
-        #     if amount == "Q":
-        #         print()
-        #         return
-        # except IOError as e:
-        #     if e.errno == IntegerException:
-        #         print("Value must be an integer.")
-        #     elif amount > send_account_balance:
-        #         print("Value cannot exceed account balance.")
-        #     elif ValueError:
-        #         print("Error - please try again.")
-        #     else:
-        #         valid = True
-
+        amount = int_check("Enter amount to transfer: ")
+        if amount > send_account_balance:
+            print("Transfer quantity can not exceed account balance.")
+            print()
+        else:
+            valid = True
     receive = ""
     found_account = False
+    print()
     while not found_account:
+        receive = input(f"Enter bank account number to deposit ${amount} into (or 'Q' to quit): ").upper()
         if receive == "Q":
+            print("---------------------")
             print()
             return
-        receive = input(f"Enter bank account number to deposit {amount} into (or 'Q' to quit): ").upper()
         for user in userList:
             if receive == user.account_no:
                 withdraw_account_balance = user.balance
@@ -197,31 +179,29 @@ def transfer():
                 print(f"Balance: {user.balance}")
                 print()
                 found_account = True
-    print()
-    confirm = False
-    while not confirm and confirm != "Q":
-        confirm = input((f"Press >ENTER< to confirm that you want to transfer {amount} from account "
-                         f"{send} to {receive} (or 'Q' to quit): ")).upper()
-        if confirm == "Q":
-            print("---------------------")
-            print()
-            return
-        elif confirm is True:
-            send.balance -= amount
-            receive.balance += amount
-            print(f"{amount} has been transferred from {send} to {receive}.")
-            print("---------------------")
-            print()
-            return
-        else:
-            print("That is not a valid choice. Transfer cancelled.")
-            print("---------------------")
-            print()
-            return
+
+    confirm = input((f"Press >ENTER< to confirm that you want to transfer ${amount} from account "
+                     f"{send} to {receive} (or 'Q' to quit): ")).upper()
+    if confirm == "Q":
+        print("---------------------")
+        print()
+        return
+    elif confirm == "":
+        send.balance -= amount
+        receive.balance += amount
+        print(f"${amount} has been transferred from {send} to {receive}.")
+        print("---------------------")
+        print()
+        return
+    else:
+        print("That is not a valid choice. Transfer cancelled.")
+        print("---------------------")
+        print()
+        return
 
 
 # Main...
-userList = []          
+userList = []
 generateUsers()
 
 userChoice = ""
