@@ -174,7 +174,8 @@ def transfer():
                 max_users = [user for user in userList if user.balance == max_balance]
                 print("User(s) with highest balance:")
                 for user in max_users:
-                    print(f"{user.first_name} {user.last_name}: ${user.balance}\n")
+                    print(f"{user.first_name} {user.last_name}: ${user.balance}")
+                print("---------------------\n")
 
 
 # Main...
